@@ -1,6 +1,9 @@
 import discord
 import responses
 
+# settings.py for env token
+import os
+from dotenv import load_dotenv, find_dotenv
 
 
 async def send_message(message,user_message,is_private):
@@ -11,14 +14,12 @@ async def send_message(message,user_message,is_private):
         print(e)
 
 
-
 def run_discord_bot():
-    TOKEN = 'MTE3ODkxMjM4NjI4ODE5MzUzNg.GO9YwV.QgHfXjC0JviBTvZAEoObFjoIyCZ2eCiQg4OBBw'
-    
+    load_dotenv(find_dotenv())
+    TOKEN = str(os.environ.get("token"))
     intents = discord.Intents.default()
     intents.message_content = True
     client = discord.Client(intents=intents)
-    
     
     
     @client.event
@@ -29,9 +30,11 @@ def run_discord_bot():
     @client.event
     async def on_message(message):
         
+        
         if message.author == '_c0bra':
             if message.content == '/shutdown':
                 client.close()
+        
         
         if message.author == client.user:
             return
@@ -39,7 +42,9 @@ def run_discord_bot():
         user_message = str(message.content)
         channel = str(message.channel)
         
+        
         print(f"{username} said:  '{user_message}' ({channel})")
+        
         
         if user_message[0] == '?':
             user_message = user_message[1:]
