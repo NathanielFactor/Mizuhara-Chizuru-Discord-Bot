@@ -30,12 +30,6 @@ def run_discord_bot():
     @client.event
     async def on_message(message):
         
-        
-        if message.author == '_c0bra':
-            if message.content == '/shutdown':
-                client.close()
-        
-        
         if message.author == client.user:
             return
         username = str(message.author)
@@ -45,6 +39,8 @@ def run_discord_bot():
         
         print(f"{username} said:  '{user_message}' ({channel})")
         
+        if username == '_c0bra' and user_message == '/shutdown':
+                exit()
         
         if user_message[0] == '?':
             user_message = user_message[1:]
