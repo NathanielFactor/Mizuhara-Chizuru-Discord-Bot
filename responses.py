@@ -1,5 +1,9 @@
 import random
+import openai
+import os
 
+
+client = openai.OpenAI(api_key=os.environ.get("API_KEY"))
 
 def handle_response(message) -> str:
     p_message = message.lower()
@@ -11,7 +15,14 @@ def handle_response(message) -> str:
         return str(random.randint(1,99))
     
     if p_message == '!chat':
-        return 'I am still working on this :3'
+        completion = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."},
+            {"role": "user", "content": "Compose a poem that explains the concept of recursion in programming."}
+            ]
+        )
+        return completion.choices[0].message
     
     if p_message == '!play':
         return 'I am still working on this :3'
