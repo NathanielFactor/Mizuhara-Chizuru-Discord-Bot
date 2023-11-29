@@ -1,16 +1,9 @@
 import discord
-import responses
+from app.openai import ai_response
 
 # settings.py for env token
 import os
 from dotenv import load_dotenv, find_dotenv
-
-async def send_message(message,user_message,is_private):
-    try:
-        response = responses.handle_response(user_message)
-        await message.author.send(response) if is_private else await message.channel.send(response)
-    except Exception as e:
-        print(e)
 
 
 def run_discord_bot():
@@ -31,20 +24,30 @@ def run_discord_bot():
         
         if message.author == client.user:
             return
+        
         username = str(message.author)
-        user_message = str(message.content)
         channel = str(message.channel)
+        command = None
+        user_message = None
         
+        for text in ['/ai','/bot','/chizuru','mizuhara','/shutdown','/dm']:
+            if message.content.startswith(text):
+                command = message.content.split(' ')[0]
+                user_message = message.content.replace(text, ' ')
         
-        print(f"{username} said:  '{user_message}' ({channel})")
+        print(f"{username} said:  '{command}' '{user_message}' ({channel})")
         
-        if username == '_c0bra' and user_message == '/shutdown':
-                exit()
+        if username == '_c0bra' and command == '/shutdown':
+            exit()
         
-        if user_message[0] == '?':
-            user_message = user_message[1:]
-            await send_message(message,user_message,is_private=True)
-        else:
-            await send_message(message,user_message,is_private=False)
+        if command in ['/ai', '/bot', '/chizuru', 'mizuhara']:
+            bot_response = ai_response(user_message)
+            await message.channel.send(f"{bot_response}")
+                
+#        if command == '/dm':
+ #           user_message = user_message[1:]
+  #          await message.channel.send(message,user_message,is_private=True)
+   #     else:
+    #        await message.channel.send(message,user_message,is_private=False)
     
     client.run(TOKEN)
